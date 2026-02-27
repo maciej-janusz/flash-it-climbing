@@ -7,6 +7,7 @@ from app.models.routebase import Route, Crag, Country
 from app.core.types import RouteType
 from pymongo.errors import DuplicateKeyError
 from app.schemas.routebase import RouteCreate, CragCreate
+from .utils import clean_string
 import asyncio
 import re
 
@@ -125,7 +126,7 @@ class RoutebaseService:
     
     @staticmethod
     async def search_route(query: str, page: int = 1, limit: int = 10, crag_id: Optional[str] = None) -> List[Route]:
-        q = query.lower().strip()
+        q = clean_string(query).lower().strip()
         words = list(filter(lambda x: len(x) >= 2, q.split()))
         if not words:
             return []
@@ -160,7 +161,7 @@ class RoutebaseService:
     
     @staticmethod
     async def search_crag(query: str, page: int = 1, limit: int = 10, country_id: Optional[str] = None) -> List[Crag]:
-        q = query.lower().strip()
+        q = clean_string(query).lower().strip()
         words = list(filter(lambda x: len(x) >= 2, q.split()))
         if not words:
             return []
@@ -260,7 +261,7 @@ class RoutebaseService:
         tokens = set()
         
         for item in items:
-            for word in item.lower().split():
+            for word in clean_string(item).lower().split():
                 for i in range(2, len(word) + 1):
                     tokens.add(word[:i])
         
