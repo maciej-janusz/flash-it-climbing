@@ -16,6 +16,10 @@ from app.schemas.users import UserRead, UserCreate, UserUpdate
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """
+    Handle application startup and shutdown events.
+    Initializes database client, models, and seeds initial data.
+    """
     settings = get_settings()
     client = create_client()
     db = client[settings.mongo_db]
@@ -27,6 +31,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         yield
     finally:
         client.close()
+
         
 settings = get_settings()
 

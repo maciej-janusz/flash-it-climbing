@@ -14,6 +14,7 @@ import re
 class RoutebaseService:
     @staticmethod
     async def fetch_crags_by_country(country_id: str) -> List[Crag]:
+        """Fetch all crags for a specific country."""
         try:
             country_id = PydanticObjectId(country_id)
         except (TypeError, ValueError, InvalidId):
@@ -24,11 +25,13 @@ class RoutebaseService:
     
     @staticmethod
     async def fetch_all_countries() -> List[Country]:
+        """Fetch all countries sorted by name."""
         countries = await Country.find_all().sort(+Country.name).to_list()
         return countries
     
     @staticmethod
     async def fetch_routes_by_crag(crag_id: str) -> List[Route]:
+        """Fetch all routes for a specific crag."""
         try:
             crag_id = PydanticObjectId(crag_id)
         except (TypeError, ValueError, InvalidId):
@@ -39,6 +42,7 @@ class RoutebaseService:
     
     @staticmethod
     async def fetch_crag(crag_id: str) -> Crag:
+        """Fetch a single crag by its ID."""
         try:
             crag_id = PydanticObjectId(crag_id)
         except (TypeError, ValueError, InvalidId):
@@ -50,6 +54,7 @@ class RoutebaseService:
     
     @staticmethod
     async def fetch_route(route_id: str) -> Route:
+        """Fetch a single route by its ID."""
         try:
             route_id = PydanticObjectId(route_id)
         except (TypeError, ValueError, InvalidId):
@@ -62,6 +67,7 @@ class RoutebaseService:
     
     @staticmethod
     async def add_route(crag_id: str, name: str, grade: str, route_type: RouteType) -> Route:
+        """Add a new route to the database."""
         try:
             crag_id = PydanticObjectId(crag_id)
         except (TypeError, ValueError, InvalidId):
@@ -98,6 +104,7 @@ class RoutebaseService:
     
     @staticmethod
     async def add_crag(country_id: str, name: str, area: str, description: Optional[str] = None) -> Crag:
+        """Add a new crag to the database."""
         try:
             country_id = PydanticObjectId(country_id)
         except (TypeError, ValueError, InvalidId):
@@ -126,6 +133,7 @@ class RoutebaseService:
     
     @staticmethod
     async def search_route(query: str, page: int = 1, limit: int = 10, crag_id: Optional[str] = None) -> List[Route]:
+        """Perform a weighted search for routes."""
         q = clean_string(query).lower().strip()
         words = list(filter(lambda x: len(x) >= 2, q.split()))
         if not words:
@@ -161,6 +169,7 @@ class RoutebaseService:
     
     @staticmethod
     async def search_crag(query: str, page: int = 1, limit: int = 10, country_id: Optional[str] = None) -> List[Crag]:
+        """Perform a weighted search for crags."""
         q = clean_string(query).lower().strip()
         words = list(filter(lambda x: len(x) >= 2, q.split()))
         if not words:
@@ -193,6 +202,7 @@ class RoutebaseService:
         ]
 
         return await Crag.aggregate(pipeline).to_list()
+
     
     @staticmethod
     async def add_routes(payloads: List[RouteCreate]):

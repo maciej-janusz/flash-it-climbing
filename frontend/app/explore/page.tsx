@@ -1,30 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getCountries } from "@/lib/api";
-import type { Crag, Country } from "@/types/api";
-
+import { useExplore } from "@/hooks/useExplore";
 import { Select } from "@/components/ui/Select";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { CragSelector } from "@/components/CragSelector";
+import { PopularRegions } from "@/components/explore/PopularRegions";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 
 export default function ExploreCragsPage() {
-  const [countries, setCountries] = useState<Country[]>([]);
-  const [selectedCountryId, setSelectedCountryId] = useState<string>("");
-  const [selectedCrag, setSelectedCrag] = useState<Crag | null>(null);
-
-  useEffect(() => {
-    getCountries().then(setCountries);
-  }, []);
-
-  // Redirect to crag detail if one is selected via selector
-  useEffect(() => {
-    if (selectedCrag) {
-      window.location.href = `/crag/${selectedCrag.id}`;
-    }
-  }, [selectedCrag]);
+  const {
+    countries,
+    selectedCountryId,
+    setSelectedCountryId,
+    setSelectedCrag
+  } = useExplore();
 
   return (
     <div className="max-w-4xl mx-auto py-12 px-4 space-y-16">
@@ -52,7 +42,9 @@ export default function ExploreCragsPage() {
           />
 
           <div className="md:col-span-2 space-y-2">
-            <label className="text-xs font-black text-flash-text-muted uppercase tracking-widest ml-1">Szukaj Rejonu</label>
+            <label className="text-xs font-black text-flash-text-muted uppercase tracking-widest ml-1">
+              Szukaj Rejonu
+            </label>
             <CragSelector 
               selectedCrag={null} 
               onSelect={setSelectedCrag} 
@@ -65,26 +57,17 @@ export default function ExploreCragsPage() {
           <p className="text-xs font-bold text-flash-text-disabled uppercase tracking-widest">
             Nie możesz znaleźć rejonu?
           </p>
-          <Link href="/add-route" className="text-flash-primary font-black text-sm uppercase tracking-tighter hover:scale-105 transition-all flex items-center gap-1">
+          <Link 
+            href="/add-route" 
+            className="text-flash-primary font-black text-sm uppercase tracking-tighter hover:scale-105 transition-all flex items-center gap-1"
+          >
             <Plus className="w-4 h-4" /> Dodaj nowy rejon / drogę
           </Link>
         </div>
       </GlassCard>
 
-      <section className="animate-fade-in" style={{ animationDelay: "200ms" }}>
-        <h3 className="text-2xl font-black text-white mb-8 px-2 tracking-tight">Popularne Rejony</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {["Siurana", "Ceuse", "Jura Północna"].map((name) => (
-            <div key={name} className="glass-card p-6 rounded-[2rem] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer group">
-               <div className="w-full h-32 bg-white/5 rounded-2xl mb-4 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-flash-primary/10 to-transparent" />
-               </div>
-               <h4 className="font-bold text-xl text-white group-hover:text-flash-primary transition-colors">{name}</h4>
-               <p className="text-flash-text-muted text-sm mt-1">Odkryj drogi w tym rejonie</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <PopularRegions />
     </div>
   );
 }
+

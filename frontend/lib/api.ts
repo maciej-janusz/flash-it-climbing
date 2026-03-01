@@ -55,6 +55,11 @@ function normalizeId<T>(item: any): T & { id: string } {
   return { ...item, id: (item.id ?? item._id ?? "").toString() } as T & { id: string };
 }
 
+/**
+ * Fetches a single route by its ID.
+ * @param id The route ID.
+ * @returns The route object or null if not found.
+ */
 export async function getRoute(id: string): Promise<Route | null> {
   try {
     const res = await api(`/v1/routebase/route/${id}`);
@@ -63,6 +68,11 @@ export async function getRoute(id: string): Promise<Route | null> {
   } catch { return null; }
 }
 
+/**
+ * Fetches a single crag by its ID.
+ * @param id The crag ID.
+ * @returns The crag object or null if not found.
+ */
 export async function getCrag(id: string): Promise<Crag | null> {
   try {
     const res = await api(`/v1/routebase/crag/${id}`);
@@ -71,6 +81,11 @@ export async function getCrag(id: string): Promise<Crag | null> {
   } catch { return null; }
 }
 
+/**
+ * Fetches all routes associated with a specific crag.
+ * @param cragId The crag ID.
+ * @returns An array of routes.
+ */
 export async function getRoutesByCrag(cragId: string): Promise<Route[]> {
   try {
     const res = await api(`/v1/routebase/routes/${cragId}`);
@@ -79,6 +94,12 @@ export async function getRoutesByCrag(cragId: string): Promise<Route[]> {
   } catch { return []; }
 }
 
+/**
+ * Searches for routes based on a query string.
+ * @param query The search query.
+ * @param page The results page number (default: 1).
+ * @returns An array of matching routes.
+ */
 export async function searchRoutes(query: string, page = 1): Promise<Route[]> {
   try {
     const params = new URLSearchParams({ query, page: String(page) });
@@ -88,6 +109,13 @@ export async function searchRoutes(query: string, page = 1): Promise<Route[]> {
   } catch { return []; }
 }
 
+/**
+ * Searches for crags based on a query string and optional country filter.
+ * @param query The search query.
+ * @param countryId Optional country filter ID.
+ * @param page The results page number (default: 1).
+ * @returns An array of matching crags.
+ */
 export async function searchCrags(query: string, countryId?: string, page = 1): Promise<Crag[]> {
   try {
     const params = new URLSearchParams({ query, page: String(page) });
@@ -98,6 +126,10 @@ export async function searchCrags(query: string, countryId?: string, page = 1): 
   } catch { return []; }
 }
 
+/**
+ * Fetches a list of all countries.
+ * @returns An array of country objects.
+ */
 export async function getCountries(): Promise<Country[]> {
   try {
     const res = await api(`/v1/routebase/countries`);
@@ -113,6 +145,11 @@ export async function getCountries(): Promise<Country[]> {
   }
 }
 
+/**
+ * Creates a new route.
+ * @param route The route creation request payload.
+ * @returns An object indicating success, the new route ID, or an error message.
+ */
 export async function createRoute(route: CreateRouteRequest): Promise<{ success: boolean; id?: string; error?: string }> {
   try {
     const res = await api(`/v1/routebase/route`, {
@@ -126,6 +163,11 @@ export async function createRoute(route: CreateRouteRequest): Promise<{ success:
   }
 }
 
+/**
+ * Creates a new crag.
+ * @param crag The crag creation request payload.
+ * @returns An object indicating success, the new crag ID, or an error message.
+ */
 export async function createCrag(crag: CreateCragRequest): Promise<{ success: boolean; id?: string; error?: string }> {
   try {
     const res = await api(`/v1/routebase/crag`, {
@@ -138,3 +180,4 @@ export async function createCrag(crag: CreateCragRequest): Promise<{ success: bo
     return { success: false, error: err.message };
   }
 }
+

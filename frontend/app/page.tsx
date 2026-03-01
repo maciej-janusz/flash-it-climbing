@@ -1,7 +1,14 @@
 import Link from "next/link";
 import { Plus, Mountain, MapPin } from "lucide-react";
+import { FeatureCard } from "@/components/home/FeatureCard";
 
 export default function HomePage() {
+  const features = [
+    { title: "Niesamowite Rejony", desc: "Tysiące zweryfikowanych miejsc wspinaczkowych.", icon: <Mountain className="w-8 h-8 text-flash-primary" /> },
+    { title: "Precyzyjne Mapy", desc: "Zawsze trafisz pod właściwy sektor.", icon: <MapPin className="w-8 h-8 text-flash-primary" /> },
+    { title: "Społeczność", desc: "Dziel się z innymi swoimi przejściami.", icon: <Mountain className="w-8 h-8 text-flash-primary" /> }
+  ];
+
   return (
     <div className="flex flex-1 flex-col gap-12">
       <section className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-flash-bg-secondary to-flash-bg p-8 md:p-16 border border-white/5">
@@ -27,18 +34,17 @@ export default function HomePage() {
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          { title: "Niesamowite Rejony", desc: "Tysiące zweryfikowanych miejsc wspinaczkowych.", icon: <Mountain className="w-8 h-8 text-flash-primary" /> },
-          { title: "Precyzyjne Mapy", desc: "Zawsze trafisz pod właściwy sektor.", icon: <MapPin className="w-8 h-8 text-flash-primary" /> },
-          { title: "Społeczność", desc: "Dziel się z innymi swoimi przejściami.", icon: <Mountain className="w-8 h-8 text-flash-primary" /> }
-        ].map((item, i) => (
-          <div key={i} className="glass-card p-8 rounded-3xl animate-fade-in" style={{ animationDelay: `${(i+1)*100}ms` }}>
-            <div className="mb-4">{item.icon}</div>
-            <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-            <p className="text-flash-text-muted leading-relaxed">{item.desc}</p>
-          </div>
+        {features.map((item, i) => (
+          <FeatureCard 
+            key={i}
+            title={item.title}
+            desc={item.desc}
+            icon={item.icon}
+            delay={(i + 1) * 100}
+          />
         ))}
       </div>
     </div>
   );
 }
+

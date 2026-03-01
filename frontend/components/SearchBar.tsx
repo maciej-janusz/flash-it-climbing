@@ -6,12 +6,17 @@ import { Search, ArrowRight } from "lucide-react";
 import { searchRoutes, searchCrags } from "@/lib/api";
 import type { Route, Crag } from "@/types/api";
 import { Input } from "./ui/Input";
+import { useDebounce } from "@/hooks/useDebounce";
 
 type Tab = "routes" | "crags";
 
+/**
+ * A search bar component with tab switching (routes/crags) and debounced search functionality.
+ */
 export function SearchBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 300);
   const [tab, setTab] = useState<Tab>("routes");
   const [results, setResults] = useState<Route[] | Crag[]>([]);
   const [loading, setLoading] = useState(false);
@@ -19,8 +24,8 @@ export function SearchBar() {
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      const q = query.trim();
+    async function performSearch() {
+      const q = debouncedQuery.trim();
       if (q.length < 2) {
         setResults([]);
         setSearched(false);
@@ -43,10 +48,9 @@ export function SearchBar() {
       } finally {
         setLoading(false);
       }
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [query, tab]);
+    }
+    performSearch();
+  }, [debouncedQuery, tab]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -112,7 +116,7 @@ export function SearchBar() {
                   {results.length === 0 ? (
                     <div className="py-12 text-center">
                       <p className="text-sm font-bold text-flash-text-disabled uppercase tracking-widest opacity-50">
-                        Brak wyników dla „{query.trim()}"
+                        Brak wyników dla „{debouncedQuery.trim()}"
                       </p>
                     </div>
                   ) : tab === "routes" ? (
@@ -170,3 +174,4 @@ export function SearchBar() {
     </div>
   );
 }
+
