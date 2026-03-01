@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Plus, Mountain, MapPin } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -16,23 +17,23 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap gap-4">
             <Link href="/add-route" className="px-8 py-4 bg-flash-primary hover:bg-flash-primary-hover text-black font-bold rounded-2xl transition-all shadow-lg shadow-flash-primary/20 active:scale-95 flex items-center gap-2">
-              <span>➕</span> Dodaj nową drogę
+              <Plus className="w-5 h-5" /> Dodaj nową drogę
             </Link>
-            <button className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-2xl transition-all active:scale-95">
+            <Link href="/explore" className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-2xl transition-all active:scale-95">
               Przeglądaj rejony
-            </button>
+            </Link>
           </div>
         </div>
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { title: "Niesamowite Rejony", desc: "Tysiące zweryfikowanych miejsc wspinaczkowych.", icon: "🏔️" },
-          { title: "Precyzyjne Mapy", desc: "Zawsze trafisz pod właściwy sektor.", icon: "📍" },
-          { title: "Społeczność", desc: "Dziel się z innymi swoimi przejściami.", icon: "🧗" }
+          { title: "Niesamowite Rejony", desc: "Tysiące zweryfikowanych miejsc wspinaczkowych.", icon: <Mountain className="w-8 h-8 text-flash-primary" /> },
+          { title: "Precyzyjne Mapy", desc: "Zawsze trafisz pod właściwy sektor.", icon: <MapPin className="w-8 h-8 text-flash-primary" /> },
+          { title: "Społeczność", desc: "Dziel się z innymi swoimi przejściami.", icon: <Mountain className="w-8 h-8 text-flash-primary" /> }
         ].map((item, i) => (
           <div key={i} className="glass-card p-8 rounded-3xl animate-fade-in" style={{ animationDelay: `${(i+1)*100}ms` }}>
-            <div className="text-4xl mb-4">{item.icon}</div>
+            <div className="mb-4">{item.icon}</div>
             <h3 className="text-xl font-bold mb-2">{item.title}</h3>
             <p className="text-flash-text-muted leading-relaxed">{item.desc}</p>
           </div>

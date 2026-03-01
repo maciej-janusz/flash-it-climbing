@@ -8,6 +8,7 @@ import { Select } from "@/components/ui/Select";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { CragSelector } from "@/components/CragSelector";
 import Link from "next/link";
+import { Plus } from "lucide-react";
 
 export default function ExploreCragsPage() {
   const [countries, setCountries] = useState<Country[]>([]);
@@ -64,8 +65,8 @@ export default function ExploreCragsPage() {
           <p className="text-xs font-bold text-flash-text-disabled uppercase tracking-widest">
             Nie możesz znaleźć rejonu?
           </p>
-          <Link href="/add-route" className="text-flash-primary font-black text-sm uppercase tracking-tighter hover:scale-105 transition-all">
-            + Dodaj nowy rejon / drogę
+          <Link href="/add-route" className="text-flash-primary font-black text-sm uppercase tracking-tighter hover:scale-105 transition-all flex items-center gap-1">
+            <Plus className="w-4 h-4" /> Dodaj nowy rejon / drogę
           </Link>
         </div>
       </GlassCard>

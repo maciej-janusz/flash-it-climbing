@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CheckCircle2, XCircle, Info } from "lucide-react";
 
 type ToastType = "success" | "error" | "info";
 
@@ -49,7 +50,13 @@ export function ToastContainer() {
           }`}
         >
           <span className="text-xl">
-            {toast.type === "success" ? "✅" : toast.type === "error" ? "❌" : "ℹ️"}
+            {toast.type === "success" ? (
+              <CheckCircle2 className="w-5 h-5" />
+            ) : toast.type === "error" ? (
+              <XCircle className="w-5 h-5" />
+            ) : (
+              <Info className="w-5 h-5" />
+            )}
           </span>
           <p className="font-bold text-sm tracking-wide">{toast.message}</p>
         </div>

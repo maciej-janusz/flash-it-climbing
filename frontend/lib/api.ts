@@ -6,19 +6,42 @@ const BASE =
     : process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
 async function api(path: string, options?: RequestInit) {
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...((options?.headers as Record<string, string>) || {}),
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
   const res = await fetch(`${BASE}${path}`, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
+    headers,
   });
 
   if (!res.ok) {
     let errorMessage = "Unknown error";
     try {
       const errorData = await res.json();
-      errorMessage = errorData.detail || errorData.message || res.statusText;
+      
+      if (typeof errorData.detail === "string") {
+        errorMessage = errorData.detail;
+      } else if (Array.isArray(errorData.detail)) {
+        errorMessage = errorData.detail
+          .map((err: any) => {
+            if (typeof err === "string") return err;
+            const locStr = Array.isArray(err.loc) ? err.loc.join(".") : "error";
+            const msgStr = typeof err.msg === "string" ? err.msg : JSON.stringify(err);
+            return `${locStr}: ${msgStr}`;
+          })
+          .join(", ");
+      } else if (errorData.detail && typeof errorData.detail === "object") {
+        errorMessage = errorData.detail.message || errorData.detail.msg || JSON.stringify(errorData.detail);
+      } else {
+        errorMessage = errorData.message || res.statusText;
+      }
     } catch {
       errorMessage = res.statusText;
     }

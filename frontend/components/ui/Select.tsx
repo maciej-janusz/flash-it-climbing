@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { ChevronDown } from "lucide-react";
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
@@ -26,8 +27,8 @@ export function Select({ label, options, className = "", ...props }: SelectProps
             </option>
           ))}
         </select>
-        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-flash-text-muted font-black text-xs">
-          ▼
+        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-flash-text-muted">
+          <ChevronDown className="w-4 h-4" />
         </div>
       </div>
     </div>

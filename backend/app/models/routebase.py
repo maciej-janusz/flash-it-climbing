@@ -4,7 +4,7 @@ from pymongo import IndexModel
 from beanie import PydanticObjectId
 from pydantic import Field
 from .utils import BaseDocument
-from app.core.types import RouteType
+from app.utils import RouteType
 
 class Route(BaseDocument):
     name: str = Field(..., min_length=2, max_length=64, description="Name of the route")

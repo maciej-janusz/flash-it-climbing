@@ -35,3 +35,26 @@ export type Country = {
   id: string;
   name: string;
 };
+
+export type User = {
+  id: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  picture?: string;
+  is_active: boolean;
+  is_superuser: boolean;
+  is_verified: boolean;
+};
+
+export type LoginRequest = {
+  username: string;
+  password: string;
+};
+
+export type RegisterRequest = {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+};

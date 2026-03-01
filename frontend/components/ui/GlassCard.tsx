@@ -4,7 +4,7 @@ interface GlassCardProps {
   children: React.ReactNode;
   className?: string;
   title?: string;
-  icon?: string;
+  icon?: React.ReactNode;
 }
 
 export function GlassCard({ children, className = "", title, icon }: GlassCardProps) {

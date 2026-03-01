@@ -1,16 +1,22 @@
-from typing import Annotated, Any
-from pydantic import BeforeValidator, BaseModel, Field, ConfigDict
+from typing import Annotated, TypeVar
+from pydantic import BaseModel, Field, ConfigDict, PlainSerializer, WithJsonSchema
 from beanie import PydanticObjectId
 
 PyObjectId = Annotated[
-    str, 
-    BeforeValidator(lambda x: str(x) if isinstance(x, PydanticObjectId) or not isinstance(x, str) else x)
+    PydanticObjectId,
+    PlainSerializer(lambda x: str(x), return_type=str),
+    WithJsonSchema({"type": "string", "example": "65f1a2b3c4d5e6f7a8b9c0d1"})
 ]
 
-class IndexedModel(BaseModel):
-    id: PyObjectId = Field(alias="_id")
-    
+T = TypeVar("T")
+Hidden = Annotated[T, Field(exclude=True)]
+
+class BasicModel(BaseModel):
     model_config = ConfigDict(
         from_attributes=True,
-        populate_by_name=True
+        populate_by_name=True,
+        arbitrary_types_allowed=True
     )
+
+class IndexedModel(BasicModel):
+    id: PyObjectId = Field(alias="_id")

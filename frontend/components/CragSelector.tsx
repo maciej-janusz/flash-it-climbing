@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { searchCrags } from "@/lib/api";
 import type { Crag } from "@/types/api";
+import { Search } from "lucide-react";
 import { Input } from "./ui/Input";
 
 interface CragSelectorProps {
@@ -70,7 +71,7 @@ export function CragSelector({ selectedCrag, onSelect, disabled, countryId }: Cr
   return (
     <div className="relative" ref={containerRef}>
       <Input
-        icon="🔍"
+        icon={<Search className="w-4 h-4" />}
         placeholder="Wyszukaj rejon (min. 2 znaki)..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}

@@ -4,3 +4,5 @@ motor==3.6.0
 beanie==1.28.0
 pydantic-settings==2.6.1
 python-dotenv==1.0.1
+fastapi-users[beanie,oauth]==15.0.4
+httpx-oauth==0.16.1

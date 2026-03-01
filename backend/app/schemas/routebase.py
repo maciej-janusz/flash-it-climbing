@@ -1,9 +1,9 @@
 from typing import Optional
-from pydantic import Field, BaseModel, ConfigDict
-from app.schemas.utils import PyObjectId, IndexedModel
-from app.core.types import RouteType
+from pydantic import Field
+from app.schemas.utils import PyObjectId, IndexedModel, BasicModel
+from app.utils import RouteType
 
-class RouteCreate(BaseModel):
+class RouteCreate(BasicModel):
     name: str = Field(..., min_length=2, max_length=64, description="Name of the route")
     grade: str = Field(..., min_length=2, max_length=3, description="Grade of the route", pattern=r"^[4-9][a-cA-C]\+?$")
     crag_id: PyObjectId = Field(..., description="ID of the associated crag")
@@ -13,7 +13,7 @@ class RouteOut(RouteCreate, IndexedModel):
     crag_name: str = Field(..., min_length=2, max_length=64, description="Name of the associated crag")
 
 
-class CragCreate(BaseModel):
+class CragCreate(BasicModel):
     name: str = Field(..., min_length=2, max_length=64, description="Name of the crag")
     area: str = Field(..., min_length=2, max_length=64, description="area of the crag")
     country_id: PyObjectId = Field(..., description="ID of the associated country")

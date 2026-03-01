@@ -4,7 +4,7 @@ from typing import List, Optional, Iterable
 from fastapi import HTTPException, status
 from pydantic import BaseModel
 from app.models.routebase import Route, Crag, Country
-from app.core.types import RouteType
+from app.utils import RouteType
 from pymongo.errors import DuplicateKeyError
 from app.schemas.routebase import RouteCreate, CragCreate
 from .utils import clean_string

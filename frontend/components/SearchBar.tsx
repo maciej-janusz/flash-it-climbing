@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { Search, ArrowRight } from "lucide-react";
 import { searchRoutes, searchCrags } from "@/lib/api";
 import type { Route, Crag } from "@/types/api";
 import { Input } from "./ui/Input";
@@ -65,7 +66,7 @@ export function SearchBar() {
           onClick={() => setIsOpen(true)}
           className="flex w-full items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-6 py-4 text-left text-sm text-flash-text-muted transition hover:bg-white/10"
         >
-          <span className="text-flash-primary">🔍</span>
+          <Search className="w-4 h-4 text-flash-primary" />
           Szukaj dróg i rejonów...
         </button>
       ) : (
@@ -90,7 +91,7 @@ export function SearchBar() {
               </div>
               <Input
                 autoFocus
-                icon="🔍"
+                icon={<Search className="w-4 h-4" />}
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -134,7 +135,7 @@ export function SearchBar() {
                             <span className="font-black text-sm text-flash-primary drop-shadow-glow">
                               {r.grade}
                             </span>
-                            <span className="text-flash-text-disabled group-hover:text-flash-primary transition-colors transform group-hover:translate-x-1">→</span>
+                            <ArrowRight className="w-4 h-4 text-flash-text-disabled group-hover:text-flash-primary transition-colors transform group-hover:translate-x-1" />
                           </div>
                         </Link>
                       </li>
@@ -155,7 +156,7 @@ export function SearchBar() {
                               {c.area} · {c.country_name}
                             </span>
                           </div>
-                          <span className="text-flash-text-disabled group-hover:text-flash-primary transition-colors transform group-hover:translate-x-1">→</span>
+                          <ArrowRight className="w-4 h-4 text-flash-text-disabled group-hover:text-flash-primary transition-colors transform group-hover:translate-x-1" />
                         </Link>
                       </li>
                     ))
