@@ -9,10 +9,9 @@ from app.core.config import get_settings
 from app.db.mongo import create_client, init_beanie_for_models
 from app.db.seeder import seed_countries
 from app.models.routebase import Route, Crag, Country
-from app.api.v1.routebase import router as routebase_router
-from app.core.auth import auth_backend, fastapi_users
-
-from app.schemas.users import UserRead, UserCreate, UserUpdate
+from app.api.v1.endpoints.routebase import router as routebase_router
+from app.api.v1.endpoints.auth import router as auth_router
+from starlette.middleware.sessions import SessionMiddleware
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -43,23 +42,16 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    
+)
+
+app.add_middleware(
+    SessionMiddleware, 
+    secret_key=settings.auth_secret, 
+    https_only=False,  #todo: wyjebac
+    same_site="lax"
 )
 
 app.include_router(routebase_router)
+app.include_router(auth_router, prefix="/auth")
 
-app.include_router(
-    fastapi_users.get_auth_router(auth_backend),
-    prefix="/auth/jwt",
-    tags=["auth"],
-)
-
-app.include_router(
-    fastapi_users.get_register_router(UserRead, UserCreate),
-    prefix="/auth",
-    tags=["auth"],
-)
-app.include_router(
-    fastapi_users.get_users_router(UserRead, UserUpdate),
-    prefix="/users",
-    tags=["users"],
-)

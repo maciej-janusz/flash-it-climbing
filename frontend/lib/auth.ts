@@ -59,7 +59,7 @@ export const authService = {
     if (!token) return null;
 
     try {
-      const res = await fetch(`${BASE}/users/me`, {
+      const res = await fetch(`${BASE}/auth/users/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
