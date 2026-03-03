@@ -27,7 +27,7 @@ export default function ExploreCragsPage() {
         </p>
       </header>
 
-      <GlassCard className="md:p-12 relative overflow-hidden">
+      <GlassCard className="md:p-12 relative">
         <div className="absolute top-0 right-0 p-12 -z-10 bg-flash-primary/5 blur-3xl w-64 h-64 rounded-full" />
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

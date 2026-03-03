@@ -34,7 +34,11 @@ function CallbackContent() {
             localStorage.setItem("token", data.access_token);
             toast.success('Witaj z powrotem! Zalogowano pomyślnie.');
             await refreshUser();
-            router.push('/');
+            
+            // Redirect to the stored path or home
+            const returnTo = localStorage.getItem("auth_return_to") ?? "/";
+            localStorage.removeItem("auth_return_to");
+            router.push(returnTo);
           } else {
             toast.error('Błąd: Nie otrzymano klucza dostępu.');
             router.push('/');

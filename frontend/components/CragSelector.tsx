@@ -81,9 +81,13 @@ export function CragSelector({ selectedCrag, onSelect, disabled, countryId }: Cr
       {loading && (
         <div className="absolute right-5 top-1/2 -translate-y-1/2 w-5 h-5 border-2 border-flash-primary border-t-transparent rounded-full animate-spin" />
       )}
-
+      {isOpen && query.length >= 2 && results.length === 0 && !loading && (
+        <div className="absolute z-30 w-full mt-2 glass rounded-2xl border border-white/10 p-8 text-center text-flash-text-muted">
+          Nie znaleziono rejonu...
+        </div>
+      )}
       {isOpen && results.length > 0 && (
-        <div className="absolute z-20 w-full mt-2 glass rounded-2xl border border-white/10 shadow-2xl max-h-60 overflow-y-auto scrollbar-hide animate-slide-down">
+        <div className="absolute z-30 w-full mt-2 glass rounded-2xl border border-white/10 shadow-2xl max-h-60 overflow-y-auto scrollbar-hide animate-slide-down">
           {results.map((c) => (
             <button
               key={c.id}

@@ -112,7 +112,7 @@ export function SearchBar() {
                    <p className="text-[10px] font-black text-flash-text-disabled uppercase tracking-[0.3em]">Przeszukiwanie</p>
                 </div>
               ) : (
-                <ul className="space-y-1">
+                <ul className="space-y-1 z-30">
                   {results.length === 0 ? (
                     <div className="py-12 text-center">
                       <p className="text-sm font-bold text-flash-text-disabled uppercase tracking-widest opacity-50">

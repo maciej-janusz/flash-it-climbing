@@ -20,6 +20,12 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
   React.useEffect(() => {
     if (isOpen) {
       setMode(initialMode);
+    } else {
+      // Clear form states when modal is closed
+      setEmail("");
+      setPassword("");
+      setFirstName("");
+      setLastName("");
     }
   }, [isOpen, initialMode]);
 
@@ -29,7 +35,23 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  if (!isOpen) return null;
+  // Validation states
+  const isPasswordValid = (pass: string) => {
+    return pass.length >= 8 && 
+           /[A-Z]/.test(pass) && 
+           /[a-z]/.test(pass) && 
+           /\d/.test(pass);
+  };
+
+  const isNameValid = (name: string) => name.trim().length >= 2;
+
+  const isEmailValid = (emailStr: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailStr);
+  };
+
+  const canSubmit = mode === "login" 
+    ? isEmailValid(email) && password 
+    : isEmailValid(email) && isPasswordValid(password) && isNameValid(firstName) && isNameValid(lastName);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,9 +82,13 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
 
     if (res.ok) {
       const data = await res.json();
+      // Store current path to redirect back after login
+      localStorage.setItem("auth_return_to", window.location.pathname + window.location.search);
       window.location.href = data.authorization_url;
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[40] flex items-center justify-center p-4 sm:p-6">
@@ -94,45 +120,83 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
           <form onSubmit={handleSubmit} className="space-y-4">
             {mode === "register" && (
               <div className="grid grid-cols-2 gap-4">
-                <Input
-                  required
-                  label="Imię"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Maciej"
-                />
-                <Input
-                  required
-                  label="Nazwisko"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Janusz"
-                />
+                <div className="space-y-1">
+                  <Input
+                    required
+                    label="Imię"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="Maciej"
+                    className={firstName && !isNameValid(firstName) ? "border-red-500/50" : ""}
+                  />
+                  {firstName && !isNameValid(firstName) && (
+                    <p className="text-[10px] text-red-400 ml-1">Min. 2 znaki</p>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <Input
+                    required
+                    label="Nazwisko"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Janusz"
+                    className={lastName && !isNameValid(lastName) ? "border-red-500/50" : ""}
+                  />
+                  {lastName && !isNameValid(lastName) && (
+                    <p className="text-[10px] text-red-400 ml-1">Min. 2 znaki</p>
+                  )}
+                </div>
               </div>
             )}
             
-            <Input
-              required
-              type="email"
-              label="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="twoj@email.com"
-            />
+            <div className="space-y-1">
+              <Input
+                required
+                type="email"
+                label="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="twoj@email.com"
+                className={email && !isEmailValid(email) ? "border-red-500/50" : ""}
+              />
+              {email && !isEmailValid(email) && (
+                <p className="text-[10px] text-red-400 ml-1">Wprowadź poprawny adres email</p>
+              )}
+            </div>
             
-            <Input
-              required
-              type="password"
-              label="Hasło"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
+            <div className="space-y-1">
+              <Input
+                required
+                type="password"
+                label="Hasło"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className={mode === "register" && password && !isPasswordValid(password) ? "border-red-500/50" : ""}
+              />
+              {mode === "register" && password && (
+                <div className="flex flex-wrap gap-x-3 gap-y-1 ml-1 mt-1">
+                  <span className={`text-[10px] ${password.length >= 8 ? "text-green-400" : "text-flash-text-muted"}`}>
+                    • Min. 8 znaków
+                  </span>
+                  <span className={`text-[10px] ${/[A-Z]/.test(password) ? "text-green-400" : "text-flash-text-muted"}`}>
+                    • Wielka litera
+                  </span>
+                  <span className={`text-[10px] ${/[a-z]/.test(password) ? "text-green-400" : "text-flash-text-muted"}`}>
+                    • Mała litera
+                  </span>
+                  <span className={`text-[10px] ${/\d/.test(password) ? "text-green-400" : "text-flash-text-muted"}`}>
+                    • Cyfra
+                  </span>
+                </div>
+              )}
+            </div>
 
             <Button 
               type="submit" 
               loading={loading} 
-              className="w-full mt-4 py-4"
+              disabled={!canSubmit || loading}
+              className="w-full mt-4 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {mode === "login" ? "Zaloguj się" : "Zarejestruj się"}
             </Button>
