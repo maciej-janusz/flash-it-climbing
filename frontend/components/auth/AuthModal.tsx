@@ -43,7 +43,6 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
         setMode("login");
       }
     } catch (err) {
-      // Error is handled by AuthContext toast
     } finally {
       setLoading(false);
     }
@@ -52,12 +51,19 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
   const handleGoogleLogin = async () => {
     const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
     
-    // TO MUSI BYĆ ADRES BACKENDU (ten sam, który masz w Google Cloud Console)
-    const backendCallbackUrl = `${apiBaseUrl}/auth/google/callback`;
+    const frontendCallbackUrl = `${window.location.origin}/auth/oauth-callback`;
     
-    // Finalny link do inicjacji logowania
-    window.location.href = `${apiBaseUrl}/auth/google/authorize?redirect_uri=${encodeURIComponent(backendCallbackUrl)}`;
+    const res = await fetch(`${apiBaseUrl}/auth/google/authorize?redirect_uri=${encodeURIComponent(frontendCallbackUrl)}`, {
+      method: "GET",
+      credentials: "include"
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      window.location.href = data.authorization_url;
+    }
   };
+
   return (
     <div className="fixed inset-0 z-[40] flex items-center justify-center p-4 sm:p-6">
       <div 

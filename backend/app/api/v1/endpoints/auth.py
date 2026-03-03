@@ -41,7 +41,7 @@ router.include_router(
         settings.auth_secret,
         associate_by_email=True,
         is_verified_by_default=True,
-        redirect_url= f"{settings.frontend_url}/auth/callback",
+        redirect_url= f"{settings.frontend_url}/auth/oauth-callback",
         csrf_token_cookie_secure=False, #todo: wyjebac
         csrf_token_cookie_samesite="lax",
     ),
