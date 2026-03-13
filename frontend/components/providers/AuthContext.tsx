@@ -9,6 +9,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
+  googleLogin: (redirect_page: string) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -63,6 +64,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const googleLogin = async (redirect_page: string) => {
+    setLoading(true);
+    try {
+      await authService.googleLogin(redirect_page);
+      await refreshUser();
+      toast.success("Zalogowano pomyślnie!");
+    } catch (err: any) {
+      toast.error(err.message || "Błąd logowania");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const register = async (data: RegisterRequest) => {
     setLoading(true);
     try {
@@ -87,6 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user, 
       loading, 
       login, 
+      googleLogin,
       register, 
       logout, 
       refreshUser,

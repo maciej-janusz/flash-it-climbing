@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
 
 /**
- * A custom hook that returns a debounced version of the provided value.
- * Useful for delaying API calls or other expensive operations during rapid input changes.
+ * A custom hook that returns a debounced version of a state value.
+ * Manages its own state internally, returning the debounced value,
+ * the current value, and a dispatcher to update the value.
  * 
- * @param value The value to be debounced.
+ * @param initialValue The initial value for the state.
  * @param delay The delay in milliseconds (default: 500ms).
- * @returns The debounced value.
+ * @returns A tuple containing [debouncedValue, currentValue, setValue].
  */
-export function useDebounce<T>(value: T, delay: number = 500): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+export function useDebounce<T>(initialValue: T, delay: number = 500): [T, T, (value: T) => void] {
+  const [value, setValue] = useState<T>(initialValue);
+  const [debouncedValue, setDebouncedValue] = useState<T>(initialValue);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -21,5 +23,5 @@ export function useDebounce<T>(value: T, delay: number = 500): T {
     };
   }, [value, delay]);
 
-  return debouncedValue;
+  return [debouncedValue, value, setValue];
 }

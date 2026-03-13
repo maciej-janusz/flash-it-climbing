@@ -3,7 +3,7 @@
 import { useExplore } from "@/hooks/useExplore";
 import { Select } from "@/components/ui/Select";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { CragSelector } from "@/components/CragSelector";
+import { CragSelector } from "@/components/crag/CragSelector";
 import { PopularRegions } from "@/components/explore/PopularRegions";
 import Link from "next/link";
 import { Plus } from "lucide-react";
@@ -57,12 +57,21 @@ export default function ExploreCragsPage() {
           <p className="text-xs font-bold text-flash-text-disabled uppercase tracking-widest">
             Nie możesz znaleźć rejonu?
           </p>
-          <Link 
-            href="/add-route" 
-            className="text-flash-primary font-black text-sm uppercase tracking-tighter hover:scale-105 transition-all flex items-center gap-1"
-          >
-            <Plus className="w-4 h-4" /> Dodaj nowy rejon / drogę
-          </Link>
+          <div className="flex flex-col md:flex-row gap-4">
+            <Link 
+              href="/add-crag" 
+              className="text-flash-primary font-black text-sm uppercase tracking-tighter hover:scale-105 transition-all flex items-center gap-1"
+            >
+              <Plus className="w-4 h-4" /> Dodaj nowy rejon
+            </Link>
+            <div className="hidden md:block w-px h-4 bg-white/10" />
+            <Link 
+              href="/add-route" 
+              className="text-flash-primary font-black text-sm uppercase tracking-tighter hover:scale-105 transition-all flex items-center gap-1"
+            >
+              <Plus className="w-4 h-4" /> Dodaj nową drogę
+            </Link>
+          </div>
         </div>
       </GlassCard>
 

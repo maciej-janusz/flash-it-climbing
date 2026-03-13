@@ -15,8 +15,7 @@ type Tab = "routes" | "crags";
  */
 export function SearchBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const debouncedQuery = useDebounce(query, 300);
+  const [debouncedQuery, query, setQuery] = useDebounce("", 300);
   const [tab, setTab] = useState<Tab>("routes");
   const [results, setResults] = useState<Route[] | Crag[]>([]);
   const [loading, setLoading] = useState(false);

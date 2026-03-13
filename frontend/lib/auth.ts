@@ -55,8 +55,8 @@ export const authService = {
    * @returns The user object or null if not authenticated.
    */
   async getCurrentUser(): Promise<User | null> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    if (!token) return null;
+    if (typeof window === "undefined") return null;
+    const token = localStorage.getItem("token");
 
     try {
       const res = await fetch(`${BASE}/auth/users/me`, {
@@ -91,5 +91,26 @@ export const authService = {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("token");
   },
+
+  /**
+   * Logs in a user with Google OAuth.
+   * @param redirect_page The page to redirect to after login.
+   */
+  async googleLogin(redirect_page: string) {
+    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
+    
+    const frontendCallbackUrl = `${window.location.origin}/auth/oauth-callback`;
+    
+    const res = await fetch(`${apiBaseUrl}/auth/google/authorize?redirect_uri=${encodeURIComponent(frontendCallbackUrl)}`, {
+      method: "GET",
+      credentials: "include"
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      localStorage.setItem("auth_return_to", redirect_page);
+      window.location.href = data.authorization_url;
+    }
+  }
 };
 

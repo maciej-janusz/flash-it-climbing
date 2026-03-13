@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef } from "react";
 import { searchCrags } from "@/lib/api";
+import { useDebounce } from "@/hooks/useDebounce";
 import type { Crag } from "@/types/api";
 import { Search } from "lucide-react";
-import { Input } from "./ui/Input";
+import { Input } from "../ui/Input";
 
 interface CragSelectorProps {
   selectedCrag: Crag | null;
@@ -14,28 +15,33 @@ interface CragSelectorProps {
 }
 
 export function CragSelector({ selectedCrag, onSelect, disabled, countryId }: CragSelectorProps) {
-  const [query, setQuery] = useState("");
+  const [debouncedQuery, query, setQuery] = useDebounce("", 300);
   const [results, setResults] = useState<Crag[]>([]);
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (query.length >= 2 && !selectedCrag) {
+    async function fetchResults() {
+      if (debouncedQuery.length >= 2 && !selectedCrag) {
         setLoading(true);
-        const data = await searchCrags(query, countryId);
-        setResults(data);
-        setLoading(false);
-        setIsOpen(true);
+        try {
+          const data = await searchCrags(debouncedQuery, countryId);
+          setResults(data);
+          setIsOpen(true);
+        } catch (error) {
+          console.error("Failed to fetch crags:", error);
+          setResults([]);
+        } finally {
+          setLoading(false);
+        }
       } else {
         setResults([]);
         setIsOpen(false);
       }
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [query, selectedCrag, countryId]);
+    }
+    fetchResults();
+  }, [debouncedQuery, selectedCrag, countryId]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {

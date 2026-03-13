@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from httpx_oauth.clients.google import GoogleOAuth2
-from app.core.auth import auth_backend, fastapi_users
+from app.auth.auth_config import auth_backend, fastapi_users
 from app.core.config import get_settings
 from app.schemas.users import UserRead, UserCreate, UserUpdate
-from app.core.user_manager import get_user_manager
+from app.auth.user_manager import get_user_manager
 
 router = APIRouter()
 settings = get_settings()

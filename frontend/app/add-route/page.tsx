@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { CragSelector } from "@/components/CragSelector";
+import { CragSelector } from "@/components/crag/CragSelector";
 import { CragForm } from "@/components/forms/CragForm";
 import { useToast } from "@/hooks/useToast";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
@@ -21,7 +21,6 @@ export default function AddRoutePage() {
   const [loading, setLoading] = useState(false);
   const [countries, setCountries] = useState<Country[]>([]);
   
-  // States
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("6a");
   const [type, setType] = useState<RouteType>("lead");
@@ -29,7 +28,15 @@ export default function AddRoutePage() {
   const [isAddingNewCrag, setIsAddingNewCrag] = useState(false);
   const [newCragData, setNewCragData] = useState({ name: "", area: "", country_id: "" });
 
-  const grades = ["6a", "6a+", "6b", "6b+", "6c", "6c+", "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+", "9a", "9a+", "9b", "9c"];
+  const grades = ["6a", "6a+", "6b", "6b+", "6c", "6c+", "7a", "7a+", "7b", "7b+", "7c", "7c+", "8a", "8a+", "8b", "8b+", "8c", "8c+", "9a", "9a+", "9b", "9b+", "9c", "9c+"];
+
+  // Validation helpers
+  const isRouteNameValid = (n: string) => n.trim().length >= 2;
+  const isNewCragValid = (data: { name: string; area: string; country_id: string }) => 
+    data.name.trim().length >= 2 && data.area.trim().length >= 2 && data.country_id !== "";
+
+  const canSubmit = isRouteNameValid(name) && 
+    (isAddingNewCrag ? isNewCragValid(newCragData) : !!selectedCrag);
 
   useEffect(() => {
     getCountries().then(setCountries);
@@ -37,6 +44,12 @@ export default function AddRoutePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    
+    if (!canSubmit) {
+      toast.error("Proszę poprawnie wypełnić wszystkie pola.");
+      return;
+    }
+    
     setLoading(true);
 
     try {
@@ -86,13 +99,19 @@ export default function AddRoutePage() {
         <form onSubmit={handleSubmit} className="space-y-8 animate-fade-in" style={{ animationDelay: "100ms" }}>
           <GlassCard title="Szczegóły drogi" icon={<Mountain className="w-5 h-5" />}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input
-                required
-                label="Nazwa drogi"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="np. Mandatory Delight"
-              />
+              <div className="space-y-1">
+                <Input
+                  required
+                  label="Nazwa drogi"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="np. Mandatory Delight"
+                  className={name && !isRouteNameValid(name) ? "border-red-500/50" : ""}
+                />
+                {name && !isRouteNameValid(name) && (
+                  <p className="text-[10px] text-red-400 ml-1 font-bold italic">Min. 2 znaki</p>
+                )}
+              </div>
               <Select
                 label="Wycena"
                 value={grade}
@@ -162,7 +181,12 @@ export default function AddRoutePage() {
             </div>
           </GlassCard>
 
-          <Button type="submit" loading={loading} className="w-full py-6 text-lg flex items-center gap-2">
+          <Button 
+            type="submit" 
+            loading={loading} 
+            disabled={!canSubmit || loading}
+            className="w-full py-6 text-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <Rocket className="w-6 h-6" /> Opublikuj drogę
           </Button>
         </form>

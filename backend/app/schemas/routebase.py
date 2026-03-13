@@ -1,7 +1,11 @@
 from typing import Optional
 from pydantic import Field
 from app.schemas.utils import PyObjectId, IndexedModel, BasicModel
-from app.utils import RouteType
+from enum import Enum
+
+class RouteType(Enum):
+    BOULDER = "boulder"
+    LEAD = "lead"
 
 class RouteCreate(BasicModel):
     name: str = Field(..., min_length=2, max_length=64, description="Name of the route")

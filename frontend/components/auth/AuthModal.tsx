@@ -15,13 +15,12 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalProps) {
   const [mode, setMode] = useState<"login" | "register">(initialMode);
   const [loading, setLoading] = useState(false);
-  const { login, register } = useAuth();
+  const { login, register, googleLogin } = useAuth();
 
   React.useEffect(() => {
     if (isOpen) {
       setMode(initialMode);
     } else {
-      // Clear form states when modal is closed
       setEmail("");
       setPassword("");
       setFirstName("");
@@ -29,13 +28,11 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
     }
   }, [isOpen, initialMode]);
 
-  // Form states
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
 
-  // Validation states
   const isPasswordValid = (pass: string) => {
     return pass.length >= 8 && 
            /[A-Z]/.test(pass) && 
@@ -71,20 +68,13 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
   };
 
   const handleGoogleLogin = async () => {
-    const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
-    
-    const frontendCallbackUrl = `${window.location.origin}/auth/oauth-callback`;
-    
-    const res = await fetch(`${apiBaseUrl}/auth/google/authorize?redirect_uri=${encodeURIComponent(frontendCallbackUrl)}`, {
-      method: "GET",
-      credentials: "include"
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      // Store current path to redirect back after login
-      localStorage.setItem("auth_return_to", window.location.pathname + window.location.search);
-      window.location.href = data.authorization_url;
+    setLoading(true);
+    try {
+      await googleLogin(window.location.pathname + window.location.search);
+      onClose();
+    } catch (err) {
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -127,11 +117,8 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="Maciej"
-                    className={firstName && !isNameValid(firstName) ? "border-red-500/50" : ""}
+                    error={firstName && !isNameValid(firstName) ? "Min. 2 znaki" : undefined}
                   />
-                  {firstName && !isNameValid(firstName) && (
-                    <p className="text-[10px] text-red-400 ml-1">Min. 2 znaki</p>
-                  )}
                 </div>
                 <div className="space-y-1">
                   <Input
@@ -140,11 +127,8 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Janusz"
-                    className={lastName && !isNameValid(lastName) ? "border-red-500/50" : ""}
+                    error={lastName && !isNameValid(lastName) ? "Min. 2 znaki" : undefined}
                   />
-                  {lastName && !isNameValid(lastName) && (
-                    <p className="text-[10px] text-red-400 ml-1">Min. 2 znaki</p>
-                  )}
                 </div>
               </div>
             )}
@@ -157,11 +141,8 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="twoj@email.com"
-                className={email && !isEmailValid(email) ? "border-red-500/50" : ""}
+                error={email && !isEmailValid(email) ? "Wprowadź poprawny adres email" : undefined}
               />
-              {email && !isEmailValid(email) && (
-                <p className="text-[10px] text-red-400 ml-1">Wprowadź poprawny adres email</p>
-              )}
             </div>
             
             <div className="space-y-1">
@@ -172,7 +153,7 @@ export function AuthModal({ isOpen, onClose, initialMode = "login" }: AuthModalP
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className={mode === "register" && password && !isPasswordValid(password) ? "border-red-500/50" : ""}
+                error={mode === "register" && password && !isPasswordValid(password) ? " " : undefined}
               />
               {mode === "register" && password && (
                 <div className="flex flex-wrap gap-x-3 gap-y-1 ml-1 mt-1">

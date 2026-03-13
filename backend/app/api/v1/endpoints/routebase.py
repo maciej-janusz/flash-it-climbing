@@ -3,7 +3,7 @@ from typing import List, Optional
 
 from app.services.routebase import RoutebaseService
 from app.schemas.routebase import RouteCreate, RouteOut, CragCreate, CragOut, CountryOut
-from app.core.auth import fastapi_users
+from app.auth.auth_config import fastapi_users
 
 router = APIRouter(prefix="/v1/routebase", tags=["Route"])
 
@@ -49,19 +49,19 @@ current_active_user = fastapi_users.current_user(active=True)
 @router.post("/route", response_model=RouteOut)
 async def add_route(payload: RouteCreate, user=Depends(current_active_user)):
     """Add a new route to a crag. Requires authentication."""
-    return await RoutebaseService.add_route(payload.crag_id, payload.name, payload.grade, payload.type)
+    return await RoutebaseService.add_route(payload.crag_id, payload.name, payload.grade, payload.type, user)
 
 @router.post("/crag", response_model=CragOut)
 async def add_crag(payload: CragCreate, user=Depends(current_active_user)):
     """Add a new crag. Requires authentication."""
-    return await RoutebaseService.add_crag(payload.country_id, payload.name, payload.area, payload.description)
+    return await RoutebaseService.add_crag(payload.country_id, payload.name, payload.area, user)
 
 @router.post("/routes", response_model=List[RouteOut])
 async def add_routes(payloads: List[RouteCreate], user=Depends(current_active_user)):
     """Batch add multiple routes. Requires authentication."""
-    return await RoutebaseService.add_routes(payloads)
+    return await RoutebaseService.add_routes(payloads, user)
 
 @router.post("/crags", response_model=List[CragOut])
 async def add_crags(payloads: List[CragCreate], user=Depends(current_active_user)):
     """Batch add multiple crags. Requires authentication."""
-    return await RoutebaseService.add_crags(payloads)
+    return await RoutebaseService.add_crags(payloads, user)

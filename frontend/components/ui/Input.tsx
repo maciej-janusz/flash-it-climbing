@@ -29,7 +29,7 @@ export function Input({ label, error, icon, className = "", ...props }: InputPro
           {...props}
         />
       </div>
-      {error && <p className="text-xs font-bold text-red-400 ml-1">{error}</p>}
+      {error && <p className="text-[10px] font-bold text-red-400 ml-1 italic">{error}</p>}
     </div>
   );
 }

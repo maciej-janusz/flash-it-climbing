@@ -1,5 +1,4 @@
 import unicodedata
-import re
 
 def clean_string(text: str) -> str:
     replacements = {

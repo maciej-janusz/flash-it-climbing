@@ -10,7 +10,7 @@ from app.db.mongo import create_client, init_beanie_for_models
 from app.db.seeder import seed_countries
 from app.models.routebase import Route, Crag, Country
 from app.api.v1.endpoints.routebase import router as routebase_router
-from app.api.v1.endpoints.auth import router as auth_router
+from app.auth.auth_router import router as auth_router
 from starlette.middleware.sessions import SessionMiddleware
 
 @asynccontextmanager

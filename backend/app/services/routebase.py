@@ -4,7 +4,8 @@ from typing import List, Optional, Iterable
 from fastapi import HTTPException, status
 from pydantic import BaseModel
 from app.models.routebase import Route, Crag, Country
-from app.utils import RouteType
+from app.models.users import User
+from app.schemas.routebase import RouteType
 from pymongo.errors import DuplicateKeyError
 from app.schemas.routebase import RouteCreate, CragCreate
 from .utils import clean_string
@@ -66,7 +67,7 @@ class RoutebaseService:
         return route
     
     @staticmethod
-    async def add_route(crag_id: str, name: str, grade: str, route_type: RouteType) -> Route:
+    async def add_route(crag_id: str, name: str, grade: str, route_type: RouteType, user: User) -> Route:
         """Add a new route to the database."""
         try:
             crag_id = PydanticObjectId(crag_id)
@@ -91,7 +92,8 @@ class RoutebaseService:
             crag_id=crag_id,
             crag_name=crag.name,
             type=route_type,
-            search_tokens=search_tokens
+            search_tokens=search_tokens,
+            author_id=user.id
         )
 
         try:
@@ -103,7 +105,7 @@ class RoutebaseService:
         return route
     
     @staticmethod
-    async def add_crag(country_id: str, name: str, area: str, description: Optional[str] = None) -> Crag:
+    async def add_crag(country_id: str, name: str, area: str, user: User) -> Crag:
         """Add a new crag to the database."""
         try:
             country_id = PydanticObjectId(country_id)
@@ -118,10 +120,10 @@ class RoutebaseService:
         crag = Crag(
             country_id=country_id, 
             name=name, 
-            area=area, 
-            description=description, 
+            area=area,  
             country_name=country.name,
-            search_tokens = search_tokens
+            search_tokens = search_tokens,
+            author_id=user.id
         )
         try:
             crag = await crag.insert()
@@ -205,13 +207,13 @@ class RoutebaseService:
 
     
     @staticmethod
-    async def add_routes(payloads: List[RouteCreate]):
+    async def add_routes(payloads: List[RouteCreate], user: User):
         sem = asyncio.Semaphore(10)
 
         async def safe_add(p: RouteCreate):
             async with sem:
                 return await RoutebaseService.add_route(
-                    p.crag_id, p.name, p.grade, p.type
+                    p.crag_id, p.name, p.grade, p.type, user
                 )
 
         tasks = [safe_add(p) for p in payloads]
@@ -236,13 +238,13 @@ class RoutebaseService:
         return final_results
     
     @staticmethod
-    async def add_crags(payloads: List[CragCreate]):
+    async def add_crags(payloads: List[CragCreate], user: User):
         sem = asyncio.Semaphore(10)
 
         async def safe_add(p: CragCreate):
             async with sem:
                 return await RoutebaseService.add_crag(
-                    p.country_id, p.name, p.area, p.description
+                    p.country_id, p.name, p.area, user
                 )
 
         tasks = [safe_add(p) for p in payloads]
